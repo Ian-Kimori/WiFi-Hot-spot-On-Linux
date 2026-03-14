@@ -33,7 +33,7 @@ We first try to start a **quick manual hotspot** to see if it works:
 nmcli device wifi hotspot ifname wlp0s20f3 con-name pop-hotspot ssid PopOS-Hotspot password StrongPass123
 ```
 
-* This successfully activate a hotspot.
+* This successfully activates a hotspot.
 * Limitation: **not persistent**, no NAT rules applied yet. Devices could connect but don’t have internet.
 
 ---
@@ -68,9 +68,9 @@ sudo iptables -A FORWARD -i enp0s31f6 -o wlp0s20f3 -m state --state RELATED,ESTA
 
 ## **Phase 4: Making NAT & forwarding persistent**
 
-We created a **script** to set up forwarding & NAT automatically:
+We now create a **script** to set up forwarding & NAT automatically:
 
-**`/usr/local/bin/start-hotspot.sh`:**
+**`/usr/local/bin/wifi-hotspot.sh`:**
 
 ```bash
 #!/bin/bash
@@ -88,7 +88,7 @@ iptables -A FORWARD -i enp0s31f6 -o wlp0s20f3 -m state --state RELATED,ESTABLISH
 * Made it executable:
 
 ```bash
-sudo chmod +x /usr/local/bin/start-hotspot.sh
+sudo chmod +x /usr/local/bin/wifi-hotspot.sh
 ```
 
 * We also created a **systemd service** to run this script at boot so NAT & forwarding are **automatic**, without having to type anything.
@@ -102,7 +102,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/start-hotspot.sh
+ExecStart=/usr/local/bin/wifi-hotspot.sh
 RemainAfterExit=yes
 
 [Install]
@@ -127,11 +127,7 @@ sudo systemctl enable hotspot-network.service
 * To start the hotspot manually after boot:
 
 ```bash
-nmcli device wifi hotspot \
-ifname wlp0s20f3 \
-con-name pop-hotspot \
-ssid "MyHotspotName" \
-password "MyHotspotPass"
+nmcli device wifi hotspot ifname wlp0s20f3 con-name pop-hotspot ssid "MyHotspotName" password "MyHotspotPass"
 ```
 
 * You can change the `ssid` and `password` each time.
