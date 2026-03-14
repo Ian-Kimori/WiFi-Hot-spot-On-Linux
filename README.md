@@ -27,14 +27,14 @@ nmcli device status
 
 ## **Phase 2: Testing a temporary hotspot**
 
-We first tried to start a **quick manual hotspot** to see if it works:
+We first try to start a **quick manual hotspot** to see if it works:
 
 ```bash
 nmcli device wifi hotspot ifname wlp0s20f3 con-name pop-hotspot ssid PopOS-Hotspot password StrongPass123
 ```
 
-* This successfully activated a hotspot.
-* Limitation: **not persistent**, no NAT rules applied yet. Devices could connect but didn’t have internet.
+* This successfully activate a hotspot.
+* Limitation: **not persistent**, no NAT rules applied yet. Devices could connect but don’t have internet.
 
 ---
 
