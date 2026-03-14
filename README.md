@@ -66,9 +66,9 @@ sudo iptables -A FORWARD -i enp0s31f6 -o wlp0s20f3 -m state --state RELATED,ESTA
 
 ---
 
-## **Phase 4: Making NAT & forwarding persistent**
+## **Phase 4: Making IP forwarding & NAT persistent**
 
-We now create a **script** to set up forwarding & NAT automatically:
+We now create a **script** to set up IP forwarding & NAT automatically:
 
 **`/usr/local/bin/wifi-hotspot.sh`:**
 
