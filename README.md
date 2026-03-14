@@ -92,8 +92,10 @@ sudo chmod +x /usr/local/bin/wifi-hotspot.sh
 ```
 
 * We also create a **systemd service** to run this script at boot so IP forwarding & NAT are **automatic**, without having to type anything.
+ 
+* Using **nano** we create a **systemd service**
 
-**`/etc/systemd/system/hotspot-network.service`:**
+**`nano /etc/systemd/system/hotspot.service`:**
 
 ```ini
 [Unit]
@@ -150,5 +152,5 @@ nmcli connection down pop-hotspot
 | Component                   | Purpose                                                          |
 | --------------------------- | ---------------------------------------------------------------- |
 | `wifi-hotspot.sh`          | Sets up IP forwarding & NAT automatically                           |
-| `hotspot-network.service`   | Runs the script at boot, so rules are applied automatically      |
+| `hotspot.service`   | Runs the script at boot, so rules are applied automatically      |
 | `nmcli device wifi hotspot` | Manual hotspot start — lets you choose SSID & password each time |
