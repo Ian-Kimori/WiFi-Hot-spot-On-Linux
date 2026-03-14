@@ -183,29 +183,93 @@ This does **two things at once:**
 So the first time you run this, it *saves* those values. Every subsequent `nmcli connection up pop-hotspot` just reuses them.
 
 ---
+Let's find it. Run these one by one:
 
-## The flow in plain terms
+---
 
+**1. Check if the profile exists at all in NetworkManager:**
+```bash
+nmcli connection show
 ```
-First run (manual command)
-        │
-        ▼
-Creates profile "pop-hotspot"
-  - SSID: MyHotspotName
-  - Password: MyHotspotPass
-  - Interface: wlp0s20f3
-        │
-        ▼
-Profile saved to /etc/NetworkManager/system-connections/pop-hotspot.nmconnection
-        │
-        ▼
-Every subsequent run (script)
-  nmcli connection up pop-hotspot  ──► reads saved profile ──► starts hotspot
+Look for `pop-hotspot` in the list. If it's there, it exists somewhere.
+
+---
+
+**2. Find where exactly it's saved:**
+```bash
+sudo find / -name "pop-hotspot*" 2>/dev/null
 ```
 
-The values (`ssid`, `password`) only need to be passed **once** — when creating the profile.
-After that, `nmcli connection up pop-hotspot` knows exactly what to do. 
-Your script is fine as-is; just make sure you've run the manual command at least once beforehand to create the profile.
+---
+
+**3. Check if it's in the runtime directory instead:**
+```bash
+ls /run/NetworkManager/system-connections/
+```
+Some distros/versions save connections here temporarily.
+
+---
+
+**4. Check if NetworkManager is using a different config directory:**
+```bash
+sudo NetworkManager --print-config | grep paths
+```
+or
+```bash
+cat /etc/NetworkManager/NetworkManager.conf
+```
+Look for a `[keyfile]` section with a custom `path=` — it might be pointing somewhere non-standard.
+
+---
+
+## Most likely explanations if it's missing:
+
+| Reason | What happened |
+|---|---|
+| Profile was never saved | The `nmcli device wifi hotspot` command created a **temporary** session only |
+| Custom NM config | NetworkManager is storing profiles in a non-default directory |
+| Profile was deleted | Something wiped it (system update, `nmcli connection delete`) |
+
+Found it. Look at this line:
+
+```
+netplan-NM-6191eb96-1f46-45a1-bb57-a1caf4dfecc6-PopOS-Hotspot.nmconnection
+```
+
+It's in `/run/NetworkManager/system-connections/` not `/etc/NetworkManager/system-connections/`. Read it with:
+
+```bash
+sudo cat "/run/NetworkManager/system-connections/netplan-NM-6191eb96-1f46-45a1-bb57-a1caf4dfecc6-PopOS-Hotspot.nmconnection"
+```
+
+---
+
+## Why is it there and not in `/etc`?
+
+Your system is using **Netplan** as the network configuration layer on top of NetworkManager. Netplan manages connections and stores its generated NM profiles in `/run/NetworkManager/system-connections/` (which is **temporary/volatile** — it gets wiped on reboot) instead of the persistent `/etc/NetworkManager/system-connections/`.
+
+---
+
+## This explains a lot — `/run` is a RAM-based tmpfs:
+
+```
+/run  →  lives in memory  →  cleared on every reboot
+/etc  →  lives on disk    →  persists across reboots
+```
+
+So your hotspot profile **disappears on reboot**, which is exactly why your startup script uses `nmcli connection up pop-hotspot` — it needs the profile to have been created first in that session.
+
+---
+
+## To make it truly persistent, move it to `/etc`:
+
+```bash
+sudo cp "/run/NetworkManager/system-connections/netplan-NM-6191eb96-1f46-45a1-bb57-a1caf4dfecc6-PopOS-Hotspot.nmconnection" /etc/NetworkManager/system-connections/pop-hotspot.nmconnection
+sudo chmod 600 /etc/NetworkManager/system-connections/pop-hotspot.nmconnection
+sudo nmcli connection reload
+```
+
+After that, `nmcli connection show` should list `pop-hotspot` sourced from `/etc` and it will survive reboots — making your auto-start script fully reliable.
 
 Breaking it down piece by piece:
 
