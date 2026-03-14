@@ -1,10 +1,8 @@
 # WiFi-Hot-spot-On-Linux
 
-Absolutely! Let’s go **step by step**, from the very start to your **final setup**, so you have the full picture of what we did and how it all fits together. I’ll break it into **phases**: checking, configuring, testing, and making it manual/persistent.
-
 ---
 
-## **Phase 1: Checking your Wi-Fi and Ethernet capabilities**
+## **Phase 1: Checking your Ethernet and Wi-Fi capabilities**
 
 1. **Check supported modes of your Wi-Fi adapter**:
 
@@ -32,11 +30,7 @@ nmcli device status
 We first tried to start a **quick manual hotspot** to see if it works:
 
 ```bash
-nmcli device wifi hotspot \
-ifname wlp0s20f3 \
-con-name pop-hotspot \
-ssid PopOS-Hotspot \
-password StrongPass123
+nmcli device wifi hotspot ifname wlp0s20f3 con-name pop-hotspot ssid PopOS-Hotspot password StrongPass123
 ```
 
 * This successfully activated a hotspot.
