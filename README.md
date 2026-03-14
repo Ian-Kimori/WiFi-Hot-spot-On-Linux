@@ -62,7 +62,7 @@ sudo iptables -A FORWARD -i enp0s31f6 -o wlp0s20f3 -m state --state RELATED,ESTA
 
 * This allow devices connected to the hotspot to access your Ethernet internet.
 
-3. **Tested the connection** → phone could see the hotspot but initially said “connected, no internet” because some rules or MASQUERADE weren’t applied correctly. Fixed by ensuring correct POSTROUTING and forwarding.
+3. **Test the connection** → phone could see the hotspot but initially said “connected, no internet” because some rules or MASQUERADE weren’t applied correctly. Fix by ensuring correct POSTROUTING and forwarding.
 
 ---
 
