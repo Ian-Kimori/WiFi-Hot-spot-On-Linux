@@ -125,7 +125,7 @@ sudo systemctl daemon-reload
 ```
 
 ```bash
-sudo systemctl enable hotspot-network.service
+sudo systemctl enable hotspot.service
 ```
 
 Now, IP forwarding + NAT rules are applied **automatically at boot**.
