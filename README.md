@@ -85,6 +85,9 @@ iptables -t nat -A POSTROUTING -s 10.42.0.0/24 -o enp0s31f6 -j MASQUERADE
 # Allow forwarding
 iptables -A FORWARD -i wlp0s20f3 -o enp0s31f6 -j ACCEPT
 iptables -A FORWARD -i enp0s31f6 -o wlp0s20f3 -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+# Start the hotspot
+#nmcli connection up pop-hotspot
 ```
 
 * Make it executable:
