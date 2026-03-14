@@ -267,6 +267,52 @@ The **WPA2 passphrase** required for other devices to connect to your hotspot. N
 | `ssid PopOS-Hotspot` | Broadcast name | What other devices see |
 | `password StrongPass123` | Auth passphrase | WPA2 key to join the hotspot |
 
+Here's a breakdown of all the actions available under `nmcli device wifi`:
+
+---
+
+## `nmcli device wifi [action]`
+
+| Action | Syntax | What it does |
+|---|---|---|
+| `list` | `nmcli device wifi list` | Lists all nearby visible WiFi networks (SSIDs, signal strength, security type, channel) |
+| `connect` | `nmcli device wifi connect <SSID>` | Connects to an existing WiFi network by SSID |
+| `hotspot` | `nmcli device wifi hotspot ...` | Creates an access point (what you've been using) |
+| `rescan` | `nmcli device wifi rescan` | Forces a fresh scan for nearby networks |
+| `show-password` | `nmcli device wifi show-password` | Shows the password of the currently active WiFi connection as text + QR code in terminal |
+
+---
+
+## But `device wifi` is just one category. `nmcli device` has more:
+
+| Action | What it does |
+|---|---|
+| `nmcli device status` | Shows all network interfaces and their state (connected, disconnected, unmanaged) |
+| `nmcli device show <ifname>` | Detailed info about a specific interface (IP, MAC, MTU, etc.) |
+| `nmcli device connect <ifname>` | Activates a device |
+| `nmcli device disconnect <ifname>` | Disconnects a device |
+| `nmcli device reapply <ifname>` | Reapplies connection settings to a device without fully reconnecting |
+| `nmcli device monitor <ifname>` | Watches a device for state changes in real time |
+| `nmcli device set <ifname>` | Changes device properties (e.g. managed/unmanaged) |
+| `nmcli device delete <ifname>` | Removes a software device (like a bridge or dummy interface) |
+
+---
+
+## And the broader nmcli object categories:
+
+| Object | Purpose |
+|---|---|
+| `nmcli device` | Manage physical/virtual network interfaces |
+| `nmcli connection` | Manage saved connection profiles |
+| `nmcli general` | NetworkManager overall status, logging, permissions |
+| `nmcli networking` | Turn networking on/off entirely |
+| `nmcli radio` | Control WiFi/WWAN radio switches (like rfkill) |
+| `nmcli monitor` | Watch all NetworkManager events live |
+
+---
+
+The ones most relevant to your hotspot setup are `nmcli connection` (for managing the saved `pop-hotspot` profile) and `nmcli radio` (which you've used before with rfkill issues on your machine).
+
 ## **Summary of the final setup**
 
 | Component                   | Purpose                                                          |
