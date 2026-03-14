@@ -165,27 +165,7 @@ Creates profile "pop-hotspot"
   - Interface: wlp0s20f3
         │
         ▼
-Profile saved to /etc/NetworkManager/system-connections/pop-hotspot.nmconnection
-        │
-        ▼
-Every subsequent run (script)
-  nmcli connection up pop-hotspot  ──► reads saved profile ──► starts hotspot
-```
-
----
-
-## The flow in plain terms
-
-```
-First run (manual command)
-        │
-        ▼
-Creates profile "pop-hotspot"
-  - SSID: MyHotspotName
-  - Password: MyHotspotPass
-  - Interface: wlp0s20f3
-        │
-        ▼
+Profile saved to /run/NetworkManager/system-connections/pop-hotspot.nmconnection or
 Profile saved to /etc/NetworkManager/system-connections/pop-hotspot.nmconnection
         │
         ▼
