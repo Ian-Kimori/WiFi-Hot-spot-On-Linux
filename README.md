@@ -203,8 +203,6 @@ Every subsequent run (script)
   nmcli connection up pop-hotspot  ──► reads saved profile ──► starts hotspot
 ```
 
----
-
 The values (`ssid`, `password`) only need to be passed **once** — when creating the profile.
 After that, `nmcli connection up pop-hotspot` knows exactly what to do. 
 Your script is fine as-is; just make sure you've run the manual command at least once beforehand to create the profile.
