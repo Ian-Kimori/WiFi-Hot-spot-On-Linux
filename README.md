@@ -85,13 +85,13 @@ iptables -A FORWARD -i wlp0s20f3 -o enp0s31f6 -j ACCEPT
 iptables -A FORWARD -i enp0s31f6 -o wlp0s20f3 -m state --state RELATED,ESTABLISHED -j ACCEPT
 ```
 
-* Made it executable:
+* Make it executable:
 
 ```bash
 sudo chmod +x /usr/local/bin/wifi-hotspot.sh
 ```
 
-* We also created a **systemd service** to run this script at boot so NAT & forwarding are **automatic**, without having to type anything.
+* We also create a **systemd service** to run this script at boot so IP forwarding & NAT are **automatic**, without having to type anything.
 
 **`/etc/systemd/system/hotspot-network.service`:**
 
@@ -109,14 +109,17 @@ RemainAfterExit=yes
 WantedBy=multi-user.target
 ```
 
-* Enabled the service:
+* Enable the service:
 
 ```bash
 sudo systemctl daemon-reload
+```
+
+```bash
 sudo systemctl enable hotspot-network.service
 ```
 
-✅ Now, NAT + forwarding rules are applied **automatically at boot**.
+Now, IP forwarding + NAT rules are applied **automatically at boot**.
 
 ---
 
@@ -132,7 +135,7 @@ nmcli device wifi hotspot ifname wlp0s20f3 con-name pop-hotspot ssid "MyHotspotN
 
 * You can change the `ssid` and `password` each time.
 
-* Your phone connects and gets internet immediately, because NAT & forwarding are already active.
+* Your phone connects and gets internet immediately, because IP forwarding & NAT are already active.
 
 * To stop the hotspot:
 
@@ -140,27 +143,12 @@ nmcli device wifi hotspot ifname wlp0s20f3 con-name pop-hotspot ssid "MyHotspotN
 nmcli connection down pop-hotspot
 ```
 
-* Optional: remove NAT & forwarding rules if needed (iptables cleanup).
-
 ---
 
 ## ✅ **Summary of the final setup**
 
 | Component                   | Purpose                                                          |
 | --------------------------- | ---------------------------------------------------------------- |
-| `start-hotspot.sh`          | Sets up NAT & forwarding automatically                           |
+| `start-hotspot.sh`          | Sets up IP forwarding & NAT automatically                           |
 | `hotspot-network.service`   | Runs the script at boot, so rules are applied automatically      |
 | `nmcli device wifi hotspot` | Manual hotspot start — lets you choose SSID & password each time |
-| Optional iptables cleanup   | Keeps rules tidy if hotspot stopped                              |
-
-**Key result:**
-
-* Boot laptop → NAT & forwarding applied automatically
-* Start hotspot manually → full control over Wi-Fi name/password
-* Stop hotspot → network rules remain until reboot, optional cleanup
-
----
-
-If you want, I can make a **visual workflow diagram** showing exactly **how NAT, forwarding, and manual hotspot fit together**, so it’s easy to remember.
-
-Do you want me to do that?
