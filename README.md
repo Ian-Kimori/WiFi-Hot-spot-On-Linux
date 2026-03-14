@@ -127,6 +127,7 @@ sudo systemctl daemon-reload
 ```bash
 sudo systemctl enable hotspot.service
 ```
+Now, IP forwarding + NAT rules are applied **automatically at boot**.
 
 Here's what's happening in each case:
 
@@ -185,11 +186,6 @@ Every subsequent run (script)
 ## Key takeaway
 
 The values (`ssid`, `password`) only need to be passed **once** — when creating the profile. After that, `nmcli connection up pop-hotspot` knows exactly what to do. Your script is fine as-is; just make sure you've run the manual command at least once beforehand to create the profile.
-```
-
-Now, IP forwarding + NAT rules are applied **automatically at boot**.
-
----
 
 ## **Phase 5: Manual hotspot start (final setup)**
 
