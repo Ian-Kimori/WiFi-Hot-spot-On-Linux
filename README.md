@@ -151,7 +151,63 @@ nmcli device wifi hotspot ifname wlp0s20f3 con-name pop-hotspot ssid "MyHotspotN
 ```bash
 nmcli connection down pop-hotspot
 ```
+---
 
+## When you run the script (automatic)
+
+```bash
+nmcli connection up pop-hotspot
+```
+
+This **brings up an existing saved connection profile** named `pop-hotspot`. 
+
+The SSID, password, channel, band — everything — was already saved into that profile the **first time** you ran the manual command. nmcli just reads from that stored profile.
+
+You can inspect what's saved with:
+```bash
+nmcli connection show pop-hotspot
+```
+
+---
+
+## When you run the manual command
+
+```bash
+nmcli device wifi hotspot ifname wlp0s20f3 con-name pop-hotspot ssid "MyHotspotName" password "MyHotspotPass"
+```
+
+This does **two things at once:**
+1. **Creates or overwrites** the connection profile named `pop-hotspot` with the SSID and password you specified
+2. **Immediately starts** the hotspot
+
+So the first time you run this, it *saves* those values. Every subsequent `nmcli connection up pop-hotspot` just reuses them.
+
+---
+
+## The flow in plain terms
+
+```
+First run (manual command)
+        │
+        ▼
+Creates profile "pop-hotspot"
+  - SSID: MyHotspotName
+  - Password: MyHotspotPass
+  - Interface: wlp0s20f3
+        │
+        ▼
+Profile saved to /etc/NetworkManager/system-connections/pop-hotspot.nmconnection
+        │
+        ▼
+Every subsequent run (script)
+  nmcli connection up pop-hotspot  ──► reads saved profile ──► starts hotspot
+```
+
+---
+
+The values (`ssid`, `password`) only need to be passed **once** — when creating the profile.
+After that, `nmcli connection up pop-hotspot` knows exactly what to do. 
+Your script is fine as-is; just make sure you've run the manual command at least once beforehand to create the profile.
 ---
 
 ## **Summary of the final setup**
