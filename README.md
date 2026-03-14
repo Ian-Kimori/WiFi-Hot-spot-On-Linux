@@ -265,7 +265,13 @@ So your hotspot profile **disappears on reboot**, which is exactly why your star
 
 ```bash
 sudo cp "/run/NetworkManager/system-connections/netplan-NM-6191eb96-1f46-45a1-bb57-a1caf4dfecc6-PopOS-Hotspot.nmconnection" /etc/NetworkManager/system-connections/pop-hotspot.nmconnection
+```
+
+```bash
 sudo chmod 600 /etc/NetworkManager/system-connections/pop-hotspot.nmconnection
+```
+
+```bash
 sudo nmcli connection reload
 ```
 
