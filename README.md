@@ -70,7 +70,9 @@ sudo iptables -A FORWARD -i enp0s31f6 -o wlp0s20f3 -m state --state RELATED,ESTA
 
 We now create a **script** to set up IP forwarding & NAT automatically:
 
-**`/usr/local/bin/wifi-hotspot.sh`:**
+```bash
+sudo nano /usr/local/bin/wifi-hotspot.sh
+```
 
 ```bash
 #!/bin/bash
