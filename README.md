@@ -145,10 +145,10 @@ nmcli connection down pop-hotspot
 
 ---
 
-## ✅ **Summary of the final setup**
+## **Summary of the final setup**
 
 | Component                   | Purpose                                                          |
 | --------------------------- | ---------------------------------------------------------------- |
-| `start-hotspot.sh`          | Sets up IP forwarding & NAT automatically                           |
+| `wifi-hotspot.sh`          | Sets up IP forwarding & NAT automatically                           |
 | `hotspot-network.service`   | Runs the script at boot, so rules are applied automatically      |
 | `nmcli device wifi hotspot` | Manual hotspot start — lets you choose SSID & password each time |
