@@ -121,7 +121,9 @@ WantedBy=multi-user.target
 * Enable the service:
 
 ```bash
-sudo systemctl daemon-reloadGreat question. Here's what's happening in each case:
+sudo systemctl daemon-reload
+```
+Here's what's happening in each case:
 
 ---
 
