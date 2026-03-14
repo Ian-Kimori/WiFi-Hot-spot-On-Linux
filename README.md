@@ -60,7 +60,7 @@ sudo iptables -A FORWARD -i wlp0s20f3 -o enp0s31f6 -j ACCEPT
 sudo iptables -A FORWARD -i enp0s31f6 -o wlp0s20f3 -m state --state RELATED,ESTABLISHED -j ACCEPT
 ```
 
-* This allowed devices connected to the hotspot to access your Ethernet internet.
+* This allow devices connected to the hotspot to access your Ethernet internet.
 
 3. **Tested the connection** → phone could see the hotspot but initially said “connected, no internet” because some rules or MASQUERADE weren’t applied correctly. Fixed by ensuring correct POSTROUTING and forwarding.
 
