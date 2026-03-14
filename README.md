@@ -95,7 +95,9 @@ sudo chmod +x /usr/local/bin/wifi-hotspot.sh
  
 * Using **nano** we create a **systemd service**
 
-**`nano /etc/systemd/system/hotspot.service`:**
+```bash
+sudo nano /etc/systemd/system/hotspot.service
+```
 
 ```ini
 [Unit]
