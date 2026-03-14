@@ -207,6 +207,66 @@ The values (`ssid`, `password`) only need to be passed **once** — when creatin
 After that, `nmcli connection up pop-hotspot` knows exactly what to do. 
 Your script is fine as-is; just make sure you've run the manual command at least once beforehand to create the profile.
 
+Breaking it down piece by piece:
+
+---
+
+**`nmcli`**
+The command-line tool for NetworkManager. It's how you control network connections, devices, and settings from the terminal without a GUI.
+
+---
+
+**`device wifi`**
+Tells nmcli you're working with a **WiFi device** specifically. `device` is the object category, `wifi` narrows it down to wireless operations.
+
+---
+
+**`hotspot`**
+The action/subcommand. Tells nmcli to create an **access point (AP)** — i.e., turn your WiFi card into a hotspot that other devices can connect to, rather than connecting to an existing network.
+
+---
+
+**`ifname wlp0s20f3`**
+- `ifname` = interface name
+- `wlp0s20f3` = your specific **physical WiFi card** identifier on your Pop!_OS machine
+
+This tells nmcli *which* WiFi interface to use for the hotspot, in case you had multiple wireless cards.
+
+---
+
+**`con-name pop-hotspot`**
+- `con-name` = connection name
+- `pop-hotspot` = the **label/profile name** NetworkManager saves this connection under
+
+This is just a human-readable identifier. It's what you reference later when running `nmcli connection up pop-hotspot`. It has nothing to do with the SSID broadcast name.
+
+---
+
+**`ssid PopOS-Hotspot`**
+- `ssid` = Service Set Identifier
+- `PopOS-Hotspot` = the **network name that other devices see** when scanning for WiFi
+
+This is what shows up on your phone/laptop when you search for available networks.
+
+---
+
+**`password StrongPass123`**
+The **WPA2 passphrase** required for other devices to connect to your hotspot. NetworkManager automatically uses WPA2-Personal security when you set this.
+
+---
+
+## Summary table
+
+| Token | Role | What it affects |
+|---|---|---|
+| `nmcli` | Tool | — |
+| `device wifi` | Category | Scopes to WiFi operations |
+| `hotspot` | Action | Creates an AP |
+| `ifname wlp0s20f3` | Hardware target | Which physical card to use |
+| `con-name pop-hotspot` | Profile label | How NM saves/references it internally |
+| `ssid PopOS-Hotspot` | Broadcast name | What other devices see |
+| `password StrongPass123` | Auth passphrase | WPA2 key to join the hotspot |
+
 ## **Summary of the final setup**
 
 | Component                   | Purpose                                                          |
