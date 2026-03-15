@@ -130,7 +130,99 @@ sudo systemctl enable hotspot.service
 Now, IP forwarding + NAT rules are applied **automatically at boot**.
 
 ---
+Breaking down every line:
 
+---
+
+## `#!/bin/bash`
+Called a **shebang**. Tells the OS to run this file using the bash interpreter. Must be the first line of any bash script.
+
+---
+
+## `echo 1 > /proc/sys/net/ipv4/ip_forward`
+- `/proc/sys/net/ipv4/ip_forward` is a **kernel parameter file** — writing `1` to it enables **IP forwarding**
+- IP forwarding allows your machine to **pass packets between interfaces** (WiFi → Ethernet and back)
+- Without this, your machine would receive packets from hotspot clients but refuse to forward them to the internet
+- This change is **temporary** — resets to `0` on reboot
+
+---
+
+## `iptables -t nat -A POSTROUTING -s 10.42.0.0/24 -o enp0s31f6 -j MASQUERADE`
+
+| Token | Meaning |
+|---|---|
+| `iptables` | Tool for configuring Linux kernel firewall/packet filtering rules |
+| `-t nat` | Work on the **NAT table** (Network Address Translation) |
+| `-A POSTROUTING` | **Append** a rule to the POSTROUTING chain — runs after routing decisions are made, just before packet leaves |
+| `-s 10.42.0.0/24` | Match packets whose **source IP** is in the hotspot subnet (IPs assigned to connected devices) |
+| `-o enp0s31f6` | Match packets going **out through** your Ethernet interface |
+| `-j MASQUERADE` | **Disguise** the source IP — replace the client's private IP (e.g. `10.42.0.5`) with your machine's public Ethernet IP so the internet can reply back |
+
+In plain terms: **"Any packet from a hotspot client heading to the internet — swap its source IP with mine so responses come back to me, then I'll forward them back to the client."**
+
+---
+
+## `iptables -A FORWARD -i wlp0s20f3 -o enp0s31f6 -j ACCEPT`
+
+| Token | Meaning |
+|---|---|
+| `-A FORWARD` | Append to the **FORWARD chain** — handles packets passing *through* your machine (not destined for it) |
+| `-i wlp0s20f3` | Packets coming **in** from your WiFi hotspot interface |
+| `-o enp0s31f6` | Going **out** through your Ethernet interface |
+| `-j ACCEPT` | **Allow** them through |
+
+In plain terms: **"Allow hotspot clients to send traffic out to the internet via Ethernet."** This is the outbound direction.
+
+---
+
+## `iptables -A FORWARD -i enp0s31f6 -o wlp0s20f3 -m state --state RELATED,ESTABLISHED -j ACCEPT`
+
+| Token | Meaning |
+|---|---|
+| `-i enp0s31f6` | Packets coming **in** from Ethernet (internet responses) |
+| `-o wlp0s20f3` | Going **out** to your WiFi hotspot clients |
+| `-m state` | Load the **state tracking module** — lets iptables track connection state |
+| `--state RELATED,ESTABLISHED` | Only allow packets that belong to an **already established** connection or are related to one (e.g. FTP data channel). Blocks unsolicited inbound packets. |
+| `-j ACCEPT` | Allow them through |
+
+In plain terms: **"Allow internet responses to flow back to hotspot clients — but only if they asked for it first."** This is the inbound direction with a security filter.
+
+---
+
+## `nmcli connection up pop-hotspot`
+- `nmcli connection up` — activates a saved NetworkManager connection profile
+- `pop-hotspot` — the profile name you created earlier
+- This **starts the WiFi hotspot** using the saved SSID, password, and interface settings
+
+Currently commented out with `#` so it won't run — you'd uncomment it once the profile is confirmed persistent in `/etc`.
+
+---
+
+## The full picture — packet flow:
+
+```
+Phone/laptop
+    │
+    │  connects via WiFi (wlp0s20f3)
+    ▼
+Your Pop!_OS machine
+    │
+    │  IP forwarding enabled ──► iptables FORWARD rules allow it
+    │  MASQUERADE hides client IP
+    ▼
+Ethernet (enp0s31f6)
+    │
+    ▼
+Internet
+    │
+    │  response comes back to your Ethernet IP
+    │  iptables allows ESTABLISHED/RELATED back through
+    ▼
+Your Pop!_OS machine
+    │
+    ▼
+WiFi client gets the response
+```
 ## **Phase 5: Manual hotspot start (final setup)**
 
 * Because you want to **choose hotspot name & password every time**, we **don’t put `nmcli` in the script**.
